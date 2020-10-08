@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<body>
+
+<div class="col-md-10 col-md-offset-1">
+    <div class="w3-panel w3-border w3-round-xxlarge">
+        <div class="w3-panel w3-pale-green">
+            <p>Enter the [Employee Number] and [Week], then press [Get Projects]</p>
+            <p>Project List will be read from SOAP WS GetProjectsForWeek()</p>
+        </div>
+    </div>
+
+    <!-- FORM: GetProjectsForWeek -->
+    <form action="get_projects.php" method="POST" id="getprojects">
+
+        <!-- Employee Number -->
+        <div id="prj-employee-group" class="form-group">
+            <label for="employee">Employee Number</label>
+            <input type="text" class="form-control" name="employee" placeholder="111315">
+        </div>
+
+        <!-- Calendar Week -->
+        <div id="prj-week-group" class="form-group">
+            <label for="week">Week</label>
+            <input type="text" class="form-control" name="week" placeholder="2019.12.31">
+        </div>
+
+        <button type="submit" class="btn btn-success">Get Projects<span class="fa fa-arrow-right"></span></button>
+        <span id="loading2">Loading...</span>
+
+    </form>
+
+    <div>
+        <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable w3-small"
+               style="table-layout:fixed" id="tab-projects">
+            <caption>Projects + Tasks for Employee: <span id="tab-employee"></span> Week: <span id="tab-week"></span></caption>
+            <col style="width:3%">
+            <col style="width:7%">
+            <col style="width:20%">
+            <col style="width:20%">
+            <col style="width:4%">
+            <col style="width:5%">
+            <col style="width:5%">
+            <col style="width:5%">
+            <col style="width:5%">
+            <col style="width:5%">
+            <thead>
+                <tr class="w3-green">
+                    <th>Nr.</th>
+                    <th>Project No.</th>
+                    <th>Project</th>
+                    <th>Task</th>
+                    <th>Action</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wen</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td class="project">Job</td>
+                    <td>Job Name</td>
+                    <td>[Task] Task Description</td>
+                    <td class="action-btn w3-btn w3-text-red">Edit</td>
+                    <td class="day1">0</td>
+                    <td class="day2">0</td>
+                    <td class="day3">0</td>
+                    <td class="day4">0</td>
+                    <td class="day5">0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>        
+    
+</div>
+
+<script>
+
+function soapUpdateProjectLine(formData) {
+
+    $.ajax({
+        type        : 'POST',
+        url         : 'update_project_line.php',
+        data        : formData,
+        dataType    : 'json',
+        encode      : true
+    })
+    .done(function(data) {
+        console.log(data);
+
+        if(data.success) {
+            console.log("Success");
+        }
+        else {
+            console.log("Error");
+        }
+    });
+}
+
+// handler for table row click
+function tableClickHandler() {
+
+    var currentAction = $(this).find(".action-btn").html();
+    if(currentAction == "Edit") {
+
+        $(this).find(".action-btn").removeClass("w3-text-red").addClass("w3-text-green");
+        $(this).find(".action-btn").text("Save");
+        
+        var value4day1 = $(this).find("td.day1").html();
+        var value4day2 = $(this).find("td.day2").html();
+        var value4day3 = $(this).find("td.day3").html();
+        var value4day4 = $(this).find("td.day4").html();
+        var value4day5 = $(this).find("td.day5").html();
+        
+        var markup = "<tr id=\"editing\">";
+        markup += "<td></td><td></td><td></td><td></td>";
+        markup += "<td class=\"action-btn w3-text-black\"></td>";
+        markup += "<td><input class=\"day1\" type=\"number\" value=\""+value4day1+"\"/></td>";  // day1
+        markup += "<td><input class=\"day2\" type=\"number\" value=\""+value4day2+"\"/></td>";  // day2
+        markup += "<td><input class=\"day3\" type=\"number\" value=\""+value4day3+"\"/></td>";  // day3
+        markup += "<td><input class=\"day4\" type=\"number\" value=\""+value4day4+"\"/></td>";  // day4
+        markup += "<td><input class=\"day5\" type=\"number\" value=\""+value4day5+"\"/></td>";  // day5
+        markup += "</tr>";
+        $(this).after(markup);
+    }
+    if(currentAction == "Save") {
+
+        var newValue4day1 = $(this).next("tr").find("td input.day1").val();     // day1
+        var newValue4day2 = $(this).next("tr").find("td input.day2").val();     // day2
+        var newValue4day3 = $(this).next("tr").find("td input.day3").val();     // day3
+        var newValue4day4 = $(this).next("tr").find("td input.day4").val();     // day4
+        var newValue4day5 = $(this).next("tr").find("td input.day5").val();     // day5
+        
+        var formData = {
+            'employee'     : $("#tab-employee").html(),
+            'week'         : $("#tab-week").html(),
+            'project'      : $(this).find("td.project").html(),
+            'task'         : "sometask",
+            'day1time'     : newValue4day1,
+            'day2time'     : newValue4day2,
+            'day3time'     : newValue4day3,
+            'day4time'     : newValue4day4,
+            'day5time'     : newValue4day5
+        };
+        soapUpdateProjectLine(formData);
+        
+        $(this).find("td.day1").html(newValue4day1);
+        $(this).find("td.day2").html(newValue4day2);
+        $(this).find("td.day3").html(newValue4day3);
+        $(this).find("td.day4").html(newValue4day4);
+        $(this).find("td.day5").html(newValue4day5);
+        
+        $(this).next("tr").remove();
+        
+        $(this).find(".action-btn").removeClass("w3-text-green").addClass("w3-text-red");
+        $(this).find(".action-btn").text("Edit");
+    }
+}
+
+$(document).ready(function() {
+
+    $("#loading2").hide();
+
+    $('#getprojects').submit(function(event) {
+
+        var formData = {
+            'employee'   : $('input[name=employee]').val(),
+            'week'       : $('input[name=week]').val(),
+        };
+        $("#tab-employee").html(formData.employee);
+        $("#tab-week").html(formData.week);
+
+        $.ajax({
+            type        : 'POST',
+            url         : 'get_projects.php',
+            data        : formData,
+            dataType    : 'json',
+            encode      : true,
+            beforeSend: function() {
+                $("#loading2").show();
+            },
+            complete: function() {
+                $("#loading2").hide();
+            }
+        })
+        .done(function(data) {
+
+            console.log(data);
+
+            if(data.success) {
+                $("#tab-projects tbody tr").remove();
+            
+                var response = data.response;
+                var employee = response.Body.GetProjectsForWeekResponse.EmployeeNumber;
+                var week = response.Body.GetProjectsForWeekResponse.WeekDate;
+                $("#tab-employee").html(employee);
+                $("#tab-week").html(week);
+
+                var timeregistrations = response.Body.GetProjectsForWeekResponse.TimeRegistrations.element;
+                // why ?
+                if(Array.isArray(timeregistrations)) {
+                    for(var i=0; i<timeregistrations.length; i++) {
+                        var registrationline = timeregistrations[i];
+                        var prjNr = registrationline.ProjectNumber;
+                        var prjName = registrationline.ProjectName;
+                        var taskNr = registrationline.TaskNumber;
+                        var taskName = registrationline.TaskName;
+                        var day1Time = registrationline.Day1RegisteredTime;
+                        var day2Time = registrationline.Day2RegisteredTime;
+                        var day3Time = registrationline.Day3RegisteredTime;
+                        var day4Time = registrationline.Day4RegisteredTime;
+                        var day5Time = registrationline.Day5RegisteredTime;
+                        var markup = "<tr><td>X</td><td class=\"project\">"+prjNr+"</td><td>"+prjName+"</td><td>["+taskNr+"] "+taskName+"</td>";
+                        markup += "<td class=\"action-btn w3-btn w3-text-red\">Edit</td>";
+                        markup += "<td class=\"day1\">"+day1Time+"</td><td class=\"day2\">"+day2Time+"</td>";
+                        markup += "<td class=\"day3\">"+day3Time+"</td><td class=\"day4\">"+day4Time+"</td>";
+                        markup += "<td class=\"day5\">"+day5Time+"</td></tr>";
+                        $("table tbody").append(markup);
+                    }
+                    // why ?
+                    $("tr").on("click", this, tableClickHandler);
+                }
+                else {
+                    var prjNr = timeregistrations.ProjectNumber;
+                    var prjName = timeregistrations.ProjectName;
+                    var taskNr = timeregistrations.TaskNumber;
+                    var taskName = timeregistrations.TaskName;
+                    var day1Time = timeregistrations.Day1RegisteredTime;
+                    var day2Time = timeregistrations.Day2RegisteredTime;
+                    var day3Time = timeregistrations.Day3RegisteredTime;
+                    var day4Time = timeregistrations.Day4RegisteredTime;
+                    var day5Time = timeregistrations.Day5RegisteredTime;
+                    var markup = "<tr><td>X</td><td class=\"project\">"+prjNr+"</td><td>"+prjName+"</td><td>["+taskNr+"] "+taskName+"</td>";
+                    markup += "<td class=\"action-btn w3-btn w3-text-red\">Edit</td>";
+                    markup += "<td class=\"day1\">"+day1Time+"</td><td class=\"day2\">"+day2Time+"</td>";
+                    markup += "<td class=\"day3\">"+day3Time+"</td><td class=\"day4\">"+day4Time+"</td>";
+                    markup += "<td class=\"day5\">"+day5Time+"</td></tr>";
+                    $("table tbody").append(markup);
+                }
+            }
+            else {
+                $("#employeenumber").html("Not Found");
+            }
+        });
+
+        event.preventDefault();
+    });
+
+    // why ?
+    $("tr").on("click", this, tableClickHandler);
+});
+</script>
+
+</body>
+</html>
