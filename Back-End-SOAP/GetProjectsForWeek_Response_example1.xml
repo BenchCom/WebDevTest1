@@ -1,0 +1,35 @@
+<soap:Envelope xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" 
+               xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+               xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" 
+               xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+   <soap:Body>
+      <namesp1:GetProjectsForWeekResponse xmlns:namesp1="maconomy.com">
+         <EmployeeNumber>111314</EmployeeNumber>
+         <WeekDate>2019.02.18</WeekDate>
+         <WeekStatus>Due</WeekStatus>
+         <TimeRegistrations>
+            <element>
+               <ProjectNumber>111-REŽ-T300</ProjectNumber>
+               <ProjectName>111-Internal Time</ProjectName>
+               <TaskNumber>TaskNr</TaskNumber>
+               <TaskName>320</TaskName>
+               <RegistrationStatus>-1</RegistrationStatus>
+               <Day1RegisteredTime>8.00</Day1RegisteredTime>
+               <Day1Description>description</Day1Description>
+               <Day2RegisteredTime>8.00</Day2RegisteredTime>
+               <Day2Description>description</Day2Description>
+               <Day3RegisteredTime>8.00</Day3RegisteredTime>
+               <Day3Description>description</Day3Description>
+               <Day4RegisteredTime>8.00</Day4RegisteredTime>
+               <Day4Description>description</Day4Description>
+               <Day5RegisteredTime>8.00</Day5RegisteredTime>
+               <Day5Description>description</Day5Description>
+               <Day6RegisteredTime>0.00</Day6RegisteredTime>
+               <Day6Description>description</Day6Description>
+               <Day7RegisteredTime>0.00</Day7RegisteredTime>
+               <Day7Description>description</Day7Description>
+            </element>
+         </TimeRegistrations>
+      </namesp1:GetProjectsForWeekResponse>
+   </soap:Body>
+</soap:Envelope>
