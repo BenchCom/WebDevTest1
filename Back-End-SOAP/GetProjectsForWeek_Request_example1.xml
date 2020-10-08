@@ -1,0 +1,10 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
+                  xmlns:mac="maconomy.com">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <mac:GetProjectsForWeek>
+         <EmployeeNumber>111314</EmployeeNumber>
+         <WeekDate>2019.02.18</WeekDate>
+      </mac:GetProjectsForWeek>
+   </soapenv:Body>
+</soapenv:Envelope>
